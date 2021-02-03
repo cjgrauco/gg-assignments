@@ -1,36 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Ilzrv\LaravelSteamAuth\SteamAuth;
-use Ilzrv\LaravelSteamAuth\SteamData;
 
 class SteamAuthController extends Controller
 {
-    /**
-     * The SteamAuth instance.
-     *
-     * @var SteamAuth
-     */
     protected $steamAuth;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    /**
-     * SteamAuthController constructor.
-     *
-     * @param SteamAuth $steamAuth
-     */
     public function __construct(SteamAuth $steamAuth)
     {
         $this->steamAuth = $steamAuth;
@@ -39,11 +18,11 @@ class SteamAuthController extends Controller
     /**
      * Get user data and login
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @throws \JsonException
      */
     public function login()
     {
-        Log::debug("entered login");
+        Log::debug("login()");
         if (!$this->steamAuth->validate()) {
             return $this->steamAuth->redirect();
         }
@@ -52,13 +31,15 @@ class SteamAuthController extends Controller
 
         $data = $this->steamAuth->getUserData();
 
-        Log::debug($data->getPersonaName());
         if (is_null($data)) {
             return $this->steamAuth->redirect();
         }
 
+        $cookieInfo = ["personaName" => $data->getPersonaName(), "avatarUrl" => $data->getAvatarFull()];
+        $cookie = cookie("userData", json_encode($cookieInfo, JSON_THROW_ON_ERROR), 20);
 
-        return redirect($this->redirectTo);
+
+        return redirect(RouteServiceProvider::PROFILE)->withCookie($cookie);
     }
 
 }

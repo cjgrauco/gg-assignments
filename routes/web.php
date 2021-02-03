@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SteamAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('login', [\App\Http\Controllers\Auth\SteamAuthController::class, 'login']);
+
+Route::get('profile', function () {
+    return view("profile");
+});
+Route::get('login', [SteamAuthController::class, 'login']);
