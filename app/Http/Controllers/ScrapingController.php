@@ -16,6 +16,10 @@ class ScrapingController extends Controller
         $this->steamSearchRepository = new SteamSearchRepository();
     }
 
+    /**
+     * Scrape steam search page
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function scrapeSteamSearch()
     {
         $body = $this->scrapingService->getSteamSearchBody();
@@ -33,6 +37,10 @@ class ScrapingController extends Controller
         return response("Crawl failed", 500);
     }
 
+    /**
+     * Get latest steam search results
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function getSteamSearchResult()
     {
         return response($this->steamSearchRepository->getLastest())

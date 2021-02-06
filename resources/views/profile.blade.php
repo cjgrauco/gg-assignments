@@ -10,7 +10,6 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
-
     <style>
         body {
             font-family: 'Nunito';
@@ -25,10 +24,13 @@
         }
 
         .main > .user-info {
-            background-color: lightblue;
+            background-color: #9099a1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+        }
+        h4{
+            text-align: center;
         }
     </style>
 </head>

@@ -15,8 +15,8 @@ class SteamAuthController extends Controller
     }
 
     /**
-     *
-     *
+     * Log user in through steam auth
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \JsonException
      */
     public function login()
@@ -24,7 +24,6 @@ class SteamAuthController extends Controller
         if (!$this->steamAuth->validate()) {
             return $this->steamAuth->redirect();
         }
-
 
         $data = $this->steamAuth->getUserData();
 
@@ -38,9 +37,14 @@ class SteamAuthController extends Controller
 
         return redirect(RouteServiceProvider::PROFILE)->withCookie($cookie);
     }
+
+    /**
+     * Logout user
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function logout()
     {
-        $cookie = cookie("userData", 0, -1,"/");
+        $cookie = cookie("userData", 0, -1, "/");
 
         return redirect(RouteServiceProvider::HOME)->withCookie($cookie);
     }
