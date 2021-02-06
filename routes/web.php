@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('profile', function () {
-    return view("profile");
+    return view('profile');
 });
 Route::get('login', [SteamAuthController::class, 'login']);
+Route::get('logout', [SteamAuthController::class, 'logout'])->name('logout');

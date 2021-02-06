@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Log;
 use Ilzrv\LaravelSteamAuth\SteamAuth;
 
 class SteamAuthController extends Controller
@@ -34,10 +33,17 @@ class SteamAuthController extends Controller
         }
 
         $cookieInfo = ["personaName" => $data->getPersonaName(), "avatarUrl" => $data->getAvatarFull()];
-        $cookie = cookie("userData", json_encode($cookieInfo, JSON_THROW_ON_ERROR), 100);
+        $cookie = cookie("userData", json_encode($cookieInfo, JSON_THROW_ON_ERROR), 100, "/");
 
 
         return redirect(RouteServiceProvider::PROFILE)->withCookie($cookie);
     }
+    public function logout()
+    {
+        $cookie = cookie("userData", 0, -1,"/");
+
+        return redirect(RouteServiceProvider::HOME)->withCookie($cookie);
+    }
+
 
 }
