@@ -12,7 +12,9 @@ class SteamSearchRepository
         $this->sanityClient = new Client([
             "projectId" => env("SANITY_PROJECT_ID"),
             "dataset" => env("SANITY_DATASET"),
-            "useCdn" => false
+            "token" => env("SANITY_TOKEN"),
+            "useCdn" => false,
+            "apiVersion" => "2020-02-06"
         ]);
     }
 
@@ -23,11 +25,21 @@ class SteamSearchRepository
         ];
 
         $newDocument = $this->sanityClient->create($document);
+
+        if (isset($newDocument["_id"])){
+            return true;
+        }
+
+        return false;
     }
 
-    public function getAll(){
+    public function getLastest(){
         try {
-            return $this->sanityClient->fetch('*[_type == "steamSearch"][]');
+            $response = $this->sanityClient->fetch('*[_type == "steamSearch"][0]{
+            info,
+            _createdAt
+            }');
+            return $response['info'];
         } catch (\Exception $e) {
             Log::error($e);
         }

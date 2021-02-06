@@ -19,4 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("scrape", [ScrapingController::class, "scrape"]);
+Route::get("scrape/steam-search", [ScrapingController::class, "getSteamSearchResult"]);
+Route::post("scrape/steam-search", [ScrapingController::class, "scrapeSteamSearch"]);

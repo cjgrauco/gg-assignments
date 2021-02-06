@@ -36,7 +36,7 @@ class ScrapingService
         return null;
     }
 
-    public function crawlSteamSearchBody(string $body): array
+    public function crawlAndSaveSteamSearch(string $body): bool
     {
         $returnArray = [];
 
@@ -70,7 +70,13 @@ class ScrapingService
             }
         }
 
-        //$this->steamSearchRepository->save(json_encode($returnArray, JSON_THROW_ON_ERROR));
-        return $returnArray;
+        try {
+            return $this->steamSearchRepository->save(json_encode($returnArray, JSON_THROW_ON_ERROR));
+
+        } catch (\JsonException $e) {
+            Log::error($e);
+        }
+
+        return false;
     }
 }

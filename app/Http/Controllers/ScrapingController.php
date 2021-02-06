@@ -1,28 +1,41 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Repositories\SteamSearchRepository;
 use App\Services\ScrapingService;
 
 class ScrapingController extends Controller
 {
     protected $scrapingService;
+    protected $steamSearchRepository;
 
     public function __construct(ScrapingService $scrapingService)
     {
         $this->scrapingService = $scrapingService;
+        $this->steamSearchRepository = new SteamSearchRepository();
     }
 
-    public function scrape()
+    public function scrapeSteamSearch()
     {
-        return "Lol";
         $body = $this->scrapingService->getSteamSearchBody();
 
         if ($body === null) {
-            return null;
+            return response("Fetching steam search page failed", 500);
         }
 
-        $gamesInfoArray = $this->scrapingService->crawlSteamSearchBody($body);
+        $crawlSuccessful = $this->scrapingService->crawlAndSaveSteamSearch($body);
 
-        return $gamesInfoArray;
+        if ($crawlSuccessful) {
+            return response("Crawl succesful");
+        }
+
+        return response("Crawl failed", 500);
+    }
+
+    public function getSteamSearchResult()
+    {
+        return response($this->steamSearchRepository->getLastest())
+            ->header("Content-Type", "application/json");
     }
 }
