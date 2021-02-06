@@ -16,17 +16,15 @@ class SteamAuthController extends Controller
     }
 
     /**
-     * Get user data and login
+     *
      *
      * @throws \JsonException
      */
     public function login()
     {
-        Log::debug("login()");
         if (!$this->steamAuth->validate()) {
             return $this->steamAuth->redirect();
         }
-        Log::debug("user validated");
 
 
         $data = $this->steamAuth->getUserData();
@@ -36,7 +34,7 @@ class SteamAuthController extends Controller
         }
 
         $cookieInfo = ["personaName" => $data->getPersonaName(), "avatarUrl" => $data->getAvatarFull()];
-        $cookie = cookie("userData", json_encode($cookieInfo, JSON_THROW_ON_ERROR), 20);
+        $cookie = cookie("userData", json_encode($cookieInfo, JSON_THROW_ON_ERROR), 100);
 
 
         return redirect(RouteServiceProvider::PROFILE)->withCookie($cookie);
