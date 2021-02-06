@@ -12,8 +12,9 @@ class ScrapingController extends Controller
         $this->scrapingService = $scrapingService;
     }
 
-    public function scrapeSteamSearch()
+    public function scrape()
     {
+        return "Lol";
         $body = $this->scrapingService->getSteamSearchBody();
 
         if ($body === null) {

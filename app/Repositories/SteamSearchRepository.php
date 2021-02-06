@@ -1,8 +1,9 @@
 <?php
 namespace App\Repositories;
+use Illuminate\Support\Facades\Log;
 use Sanity\Client;
 
-class SanityRepository
+class SteamSearchRepository
 {
     protected $sanityClient;
 
@@ -16,6 +17,20 @@ class SanityRepository
     }
 
     public function save(string $data){
+        $document = [
+            "_type" => "steamSearch",
+            "info" => $data
+        ];
 
+        $newDocument = $this->sanityClient->create($document);
+    }
+
+    public function getAll(){
+        try {
+            return $this->sanityClient->fetch('*[_type == "steamSearch"][]');
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+        return null;
     }
 }
