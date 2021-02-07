@@ -25,7 +25,6 @@ class ScrapingService
     public function getSteamSearchBody(): ?string
     {
         try {
-
             $response = $this->guzzleClient->get('https://store.steampowered.com/search/?maxprice=90&tags=5350&category1=998&supportedlang=norwegian');
             return $response->getBody()->getContents();
 
@@ -36,13 +35,24 @@ class ScrapingService
         return null;
     }
 
+    /**
+     * Crawls steams search page with a hardcoded URL with the following params:
+     * Price under 90 NOK
+     * Family friendly
+     * Only games
+     * Has norwegian language support
+     * The result is then filtered to remove any games with an "a" in the title or games with a negative rating.
+     * @param string $body
+     * @return bool
+     */
     public function crawlAndSaveSteamSearch(string $body): bool
     {
-        $returnArray = [];
+        $result = [];
 
         $this->crawler->addHtmlContent($body);
 
         $gamesInfo = $this->crawler->filterXPath('//div[@id="search_resultsRows"]/a')->each(function (Crawler $node){
+
             $title = $node->filterXPath('//span[@class="title"]')->text();
             $hasPositiveReview = $node->filterXPath('//span[@class="search_review_summary positive"]')->count() > 0;
             $releaseDate = $node->filterXPath('//div[@class="col search_released responsive_secondrow"]')->text();
@@ -58,7 +68,7 @@ class ScrapingService
             return [
                 "title" => $title,
                 "imageUrl" => $imageUrl,
-                "releaseDate" => DateTime::createFromFormat("d M, Y",$releaseDate)->format("d/m/Y"),
+                "releaseDate" => DateTime::createFromFormat("d M, Y", $releaseDate)->format("d/m/Y"),
                 "priceNOK" => $priceSplit[1] ?? $priceSplit[0],
             ];
         });
@@ -66,12 +76,12 @@ class ScrapingService
 
         foreach ($gamesInfo as $gameInfo) {
             if ($gameInfo !== null) {
-                $returnArray[] = $gameInfo;
+                $result[] = $gameInfo;
             }
         }
 
         try {
-            return $this->steamSearchRepository->save(json_encode($returnArray, JSON_THROW_ON_ERROR));
+            return $this->steamSearchRepository->save(json_encode($result, JSON_THROW_ON_ERROR));
 
         } catch (\JsonException $e) {
             Log::error($e);
@@ -79,4 +89,5 @@ class ScrapingService
 
         return false;
     }
+
 }
